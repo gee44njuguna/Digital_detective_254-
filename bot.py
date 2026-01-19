@@ -1,4 +1,5 @@
 import os
+import threading
 from flask import Flask
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
@@ -12,7 +13,11 @@ def home():
     return "Digital Detective Bot is running!"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🕵️ Welcome to Digital Detective! Your cybersecurity assistant is live.")
+    await update.message.reply_text("🕵️ Digital Detective is LIVE and ready to help you!")
+
+def run_flask():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
 
 def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
@@ -20,6 +25,5 @@ def main():
     application.run_polling()
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    threading.Thread(target=run_flask).start()
     main()
